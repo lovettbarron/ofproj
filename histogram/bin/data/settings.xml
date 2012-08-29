@@ -1,0 +1,54 @@
+<currentDay>
+    <val_0>3</val_0>
+</currentDay>
+<currentTime>
+    <val_0>17</val_0>
+</currentTime>
+<meaningful>
+    <val_0>8</val_0>
+</meaningful>
+<centerx>
+    <val_0>0</val_0>
+</centerx>
+<centery>
+    <val_0>0</val_0>
+</centery>
+<centerz>
+    <val_0>0</val_0>
+</centerz>
+<clockView>
+    <val_0>1</val_0>
+</clockView>
+<wireframe>
+    <val_0>0</val_0>
+</wireframe>
+<manualCamera>
+    <val_0>1</val_0>
+</manualCamera>
+<radius>
+    <val_0>1.88889</val_0>
+</radius>
+<depth>
+    <val_0>3.33333</val_0>
+</depth>
+<lightx>
+    <val_0>-0.555557</val_0>
+</lightx>
+<lighty>
+    <val_0>-1.11111</val_0>
+</lighty>
+<lightz>
+    <val_0>36.1111</val_0>
+</lightz>
+<unwrap>
+    <val_0>0</val_0>
+</unwrap>
+<unwrapStep>
+    <val_0>0.000172222</val_0>
+</unwrapStep>
+<rotate>
+    <val_0>16</val_0>
+</rotate>
+<maxDays>
+    <val_0>7</val_0>
+</maxDays>
