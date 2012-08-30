@@ -28,6 +28,8 @@ public:
     float padding;
     vector<ofFace> canvas;
     
+    void compareWithStillActive( vector<ofFace> * _faces);
+    
 private:
     void pack();
     float distance(ofFace & face1, ofFace & face2);

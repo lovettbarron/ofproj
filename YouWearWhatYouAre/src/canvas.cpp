@@ -3,10 +3,10 @@
 
 ofCanvas::ofCanvas()
 {
-    width = 640;
+    width = 800;
     height = 480;
-    cx = ofGetWidth()/2;
-    cy = ofGetHeight()/2;
+    cx = width/2;
+    cy = height/2;
     padding = 0.1;
  }
 
@@ -27,6 +27,26 @@ bool ofCanvas::compare(ofFace* face1, ofFace* face2) {
         return -1;
     else return 0;
 }
+
+void ofCanvas::compareWithStillActive( vector<ofFace> * _faces ) {
+    //ofLog() << "Starting compare";
+    vector<ofFace> faces = *_faces;
+    //ofLog() << "The compare array is " << ofToString(faces.size()) << " long";
+    //ofLog() << "The primary array is " << ofToString(canvas.size()) << " long";
+    if(canvas.size() == 0) canvas.push_back(faces[0]);
+    for(int i=0;i<canvas.size();i++){
+        for(int j=0;j<faces.size();j++){
+            if(canvas[i].isWithinRange(faces[j].faceLocation)) {
+                //ofLog() << "Updating " << ofToString(i) << " face";
+                canvas[i].updateFace(faces[j].theFace, faces[j].faceLocation);
+            } else {
+                //ofLog() << "Adding a new face at" << ofToString(canvas.size());
+                this->canvas.push_back(faces[j]);
+            }
+        }
+    }
+}
+
 
 void ofCanvas::update() {
  

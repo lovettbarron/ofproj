@@ -78,7 +78,7 @@ void testApp::update() {
                                     //CascadeClassifier::FIND_BIGGEST_OBJECT |
                                     //CascadeClassifier::DO_ROUGH_SEARCH |
                                     0);
-
+        saveFace();
         canvas1->update();   
     }
 }
@@ -131,6 +131,7 @@ void testApp::mouseMoved(int x, int y ){
 }
 
 void testApp::saveFace() {
+    faces.clear();
     for(int i=0; i < objects.size(); i++) {   
         
         ofImage newFace;
@@ -139,15 +140,19 @@ void testApp::saveFace() {
         int y = objects[i].y * (1 / scaleFactor);
         int w = objects[i].width * (1 / scaleFactor);
         int h = objects[i].height * (1 / scaleFactor);
-        ofLog() << "x" << ofToString(x) << " y" << ofToString(y) << " w" << ofToString(w) << " h" << ofToString(h);
+            //ofLog() << "x" << ofToString(x) << " y" << ofToString(y) << " w" << ofToString(w) << " h" << ofToString(h);
         
         ofImage pixels;
         pixels.setFromPixels(cam.getPixels(), cam.width, cam.height, OF_IMAGE_COLOR);
         newFace.cropFrom(pixels, x, y, w, h );
         newFace.reloadTexture();
-        ofFace theFace = ofFace(newFace);
-        faces.push_back( ofFace(newFace) );
-        canvas1->add( &theFace );
+        
+        ofFace theFace = ofFace(newFace, ofVec3f(x,y,0));
+        faces.push_back( theFace );
+        
+        canvas1->compareWithStillActive( &faces );
+        
+            // canvas1->add( &theFace );
     }
 }
 
