@@ -4,7 +4,7 @@ using namespace cv;
 using namespace ofxCv;
 
 void testApp::setup() {
-    ofSetFrameRate(60);
+    ofSetFrameRate(30);
     ofSetVerticalSync(true);
     ofTrueTypeFont::setGlobalDpi(72);
     raleway.loadFont("Raleway-Thin.ttf", 32, true, true);
@@ -19,6 +19,11 @@ void testApp::setup() {
     panel.addSlider("faceScale", .2, 0.05, 1.0, false);
     panel.addSlider("minAreaRadius", 7, 0, 640, true);
     panel.addSlider("maxAreaRadius", 100, 0, 640, true);
+    panel.addLabel("DetectMultiScale tweak");
+    panel.addSlider("scaleFactor",1.06, 1.01,2.0,false);
+    panel.addSlider("minNeighbors",1, 1, 5,true);
+    panel.addSlider("minSize",0, 1, 400,true);
+    panel.addSlider("maxSize",100, 1, 400,true);
     panel.addLabel("Background Subtraction");
     panel.addSlider("learningTime",900,0,2000,true);
     panel.addSlider("backgroundThresh",10,0,50,true);
@@ -40,6 +45,7 @@ void testApp::setup() {
     debug = false;
     canvas1 = new ofCanvas();
 }
+
 void testApp::update() {
     background.setLearningTime(panel.getValueI("learningTime"));
     background.setThresholdValue(panel.getValueI("backgroundThresh"));
@@ -59,11 +65,11 @@ void testApp::update() {
     }
     if(cam.isFrameNew()) {
             //convertColor(cam, thresh, CV_RGB2GRAY);
-        background.update(cam, thresh);
-        thresh.update();
-
-
-        
+//        background.update(cam, thresh);
+//        thresh.update();
+//
+//
+//        
         //Face Tracking stuff
         convertColor(cam, gray, CV_RGB2GRAY);
         resize(gray, graySmall);
@@ -73,11 +79,12 @@ void testApp::update() {
         }
         graySmall.update();
         
-        classifier.detectMultiScale(graySmallMat, objects, 1.06, 1,
+        /*classifier.detectMultiScale(graySmallMat, objects, 1.06, 1,
                                     //CascadeClassifier::DO_CANNY_PRUNING |
                                     //CascadeClassifier::FIND_BIGGEST_OBJECT |
                                     //CascadeClassifier::DO_ROUGH_SEARCH |
-                                    0);
+                                    0); */
+        classifier.detectMultiScale(graySmallMat, objects, panel.getValueF("scaleFactor"), panel.getValueI("minNeighbors"), 0, cv::Size(panel.getValueI("minSize"),panel.getValueI("minSize")), cv::Size(panel.getValueI("maxSize"),panel.getValueI("maxSize")));
         saveFace();
         canvas1->update();   
     }
@@ -89,7 +96,7 @@ void testApp::draw() {
     ofBackground(100);
     ofPushMatrix();
         ofTranslate(panelWidth, 0);
-            ofSetColor(255);
+        ofSetColor(255);
         if(debug) {
             cam.draw(0, 0);
             contourFinder.draw();
@@ -97,11 +104,13 @@ void testApp::draw() {
             graySmall.draw(cam.width, 0, 2, 256,192);
             thresh.draw(cam.width, 192, 2, 256,192);
             ofNoFill();
-                //ofScale(1 / scaleFactor, 1 / scaleFactor);
+            ofPushMatrix();
+            ofScale(1 / scaleFactor, 1 / scaleFactor);
             for(int i = 0; i < objects.size(); i++) {
                 ofLog() << "Drawing face #" << ofToString(i);
                 ofRect(toOf(objects[i]));
             }
+            ofPopMatrix();
         }
     
         ofPushMatrix();
@@ -147,7 +156,7 @@ void testApp::saveFace() {
         newFace.cropFrom(pixels, x, y, w, h );
         newFace.reloadTexture();
         
-        ofFace theFace = ofFace(newFace, ofVec3f(x,y,0));
+        ofFace theFace = ofFace(newFace, ofVec3f(x + (w/2), y + (h/2),0));
         faces.push_back( theFace );
         
         canvas1->compareWithStillActive( &faces );

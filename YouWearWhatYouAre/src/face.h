@@ -14,6 +14,7 @@ public:
     void draw(int x, int y);
     void draw();
     void reset();
+    void remove();
     
     int x;
     int y;
@@ -40,11 +41,9 @@ public:
     // Gets rounded down to pixel
     float changeThresh;
     
-    bool setInactiveFace();
-    bool setActiveFace();
     void updateFace(ofImage _face, ofVec3f _newLocation);
     bool isWithinRange(ofVec3f _difference);
-    
+    bool isActive();
 private:
     vector<ofPoint> circle;
     vector<ofPoint> circleTex;

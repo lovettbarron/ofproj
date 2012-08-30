@@ -7,7 +7,7 @@ ofFace::ofFace(ofImage & _face, ofVec3f _faceLocation)
     faceLocation = _faceLocation;
     x = ofRandom(0,ofGetWidth());
     y = ofRandom(0,ofGetHeight());
-    radius = ofRandom(0,ofGetWidth()/20);
+    radius = ofRandom(50,ofGetWidth()/20);
     bActive = true;
     age = 0;
     resolution = 64;
@@ -16,8 +16,8 @@ ofFace::ofFace(ofImage & _face, ofVec3f _faceLocation)
     tween = 0.0f;
     tweenStep = 0.01;
     inactiveTimer = 0;
-    inactiveTimerStep = 0.01f;
-    changeThresh = 100;
+    inactiveTimerStep = 0.05f;
+    changeThresh = 20;
 }
 
 ofFace::~ofFace() 
@@ -30,7 +30,11 @@ void ofFace::update() {
         genCircle();
     }
     
-    if(!bActive && inactiveTimer < 1.0) {
+    if( inactiveTimer >= 1.0) {
+        bActive = false;
+    }
+    
+    if(bActive) {
         inactiveTimer += inactiveTimerStep;
     }
     
@@ -43,18 +47,6 @@ void ofFace::update() {
     age += 1;
 }
 
-bool ofFace::setInactiveFace() {
-    bActive = false;
-}
-
-bool ofFace::setActiveFace() {
-    if(inactiveTimer < 1.0) {
-        bActive = true;
-        return true;
-    }
-    return false;
-}
-
 ofVec3f ofFace::cvFaceLocation() {
     // This might be better suited with a scale factor in future?
     return faceLocation;
@@ -62,30 +54,50 @@ ofVec3f ofFace::cvFaceLocation() {
 
 void ofFace::updateFace(ofImage _face, ofVec3f _newLocation) {
     //I should have some kind of checking here, or something.
-    inactiveTimer = 0;
-    theFace = _face;  
-    faceLocation = _newLocation;
+    if(inactiveTimer < 1.0f) {
+        inactiveTimer -= inactiveTimerStep;
+        theFace = _face;  
+        faceLocation = _newLocation;
+    }
+}
+
+bool ofFace::isActive() {
+    return bActive;
 }
 
 bool ofFace::isWithinRange(ofVec3f _difference) {
-    if(faceLocation.distance(_difference) < changeThresh) return true;
+    if(!bActive) return false;
+    else if(faceLocation.distance(_difference) < changeThresh) return true;
     else return false;
 }
 
 void ofFace::draw(int _x, int _y) {
+    glEnable(GL_DEPTH_TEST);
     glPushMatrix();  
+        glTranslatef(_x,_y,0.0f);
+        glColor4f(1.0f,1.0f,1.0f,1.0f);
         theFace.reloadTexture();
         theFace.bind();  
-        glTranslatef(_x,_y,0.0f);
         glBegin(GL_POLYGON);                  
         for(int i = 0; i < circleTex.size(); i++){  
-            glTexCoord2f(circleTex[i].x, circleTex[i].y);  
+            glTexCoord2f(circleTex[i].x, circleTex[i].y);
             glVertex2f( circle[i].x * (radius*tween),  circle[i].y * (radius*tween));  
         }  
         glEnd();  
-        
         theFace.unbind();  
+    
+    if(bActive) {
+        glBegin(GL_POLYGON);
+        glColor4f(1.0,0,0,.7);
+        for(int i = 0; i < circle.size(); i++){  
+            if( i > circle.size() * (1-inactiveTimer)) glColor3f(0,0,0);
+            glVertex2f( circle[i].x * (radius*tween+2),  circle[i].y * (radius*tween+2));  
+        }
+        glEnd();
+    }
+    
     glPopMatrix();
+    glDisable(GL_DEPTH_TEST);
 }
 
 void ofFace::draw() {
@@ -118,4 +130,13 @@ float ofFace::distance(ofVec3f point) {
 void ofFace::reset() {
     circle.clear();
     circleTex.clear();
+}
+
+void ofFace::remove() {
+    x = -1;
+    y = -1;
+    center = ofPoint(-1,-1);
+    radius = -1;
+    theFace = ofImage();
+    faceLocation = ofVec3f(-1,-1,-1);
 }

@@ -3,11 +3,13 @@
 
 ofCanvas::ofCanvas()
 {
-    width = 800;
+    width = 640;
     height = 480;
     cx = width/2;
     cy = height/2;
     padding = 0.1;
+    newFaceTimer = 0;
+    newFaceTimerThresh = 30;
  }
 
 ofCanvas::~ofCanvas() 
@@ -33,25 +35,31 @@ void ofCanvas::compareWithStillActive( vector<ofFace> * _faces ) {
     vector<ofFace> faces = *_faces;
     //ofLog() << "The compare array is " << ofToString(faces.size()) << " long";
     //ofLog() << "The primary array is " << ofToString(canvas.size()) << " long";
-    if(canvas.size() == 0) canvas.push_back(faces[0]);
     for(int i=0;i<canvas.size();i++){
-        for(int j=0;j<faces.size();j++){
-            if(canvas[i].isWithinRange(faces[j].faceLocation)) {
-                //ofLog() << "Updating " << ofToString(i) << " face";
-                canvas[i].updateFace(faces[j].theFace, faces[j].faceLocation);
-            } else {
-                //ofLog() << "Adding a new face at" << ofToString(canvas.size());
-                this->canvas.push_back(faces[j]);
+        if( canvas[i].isActive() ) {            
+            for(int j=0;j<faces.size();j++){
+                if(canvas[i].isWithinRange(faces[j].faceLocation)) {
+                    //ofLog() << "Updating " << ofToString(i) << " face";
+                    canvas[i].updateFace(faces[j].theFace, faces[j].faceLocation);
+                    faces[j].remove();
+                } else {
+                    //ofLog() << "Adding a new face at" << ofToString(canvas.size());
+                    if(newFaceTimer <= 0) {
+                    canvas.push_back(faces[j]);
+                    newFaceTimer = newFaceTimerThresh;
+                    }
+                }
             }
         }
     }
+    if(canvas.size() == 0) canvas.push_back(faces[0]);
 }
 
 
 void ofCanvas::update() {
  
         // std::sort(canvas.begin(), canvas.end(), &compare);
-    
+    newFaceTimer--;
     
     if(canvas.size() != 0) {
         float sepSq = .4 * .4;

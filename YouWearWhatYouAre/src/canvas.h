@@ -26,6 +26,8 @@ public:
     bool bActive;
     long age;
     float padding;
+    int newFaceTimer;
+    int newFaceTimerThresh;
     vector<ofFace> canvas;
     
     void compareWithStillActive( vector<ofFace> * _faces);
