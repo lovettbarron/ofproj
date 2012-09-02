@@ -1,23 +1,28 @@
 #include "ofMain.h"
 #include "face.h"
 
-ofFace::ofFace(ofImage & _face, ofVec3f _faceLocation)
+ofFace::ofFace(ofImage & _face, ofVec3f _faceLocation, ofVec3f _circleLoc)
 {
     theFace = _face;
     faceLocation = _faceLocation;
-    x = ofRandom(0,ofGetWidth());
-    y = ofRandom(0,ofGetHeight());
-    radius = ofRandom(50,ofGetWidth()/20);
+    x = _circleLoc.x;
+    y = _circleLoc.y;
+    loc = _circleLoc;
+        //    x = ofRandom(0,ofGetWidth());
+        //    y = ofRandom(0,ofGetHeight());
+    radius = ofRandom(10,ofGetWidth()/10);
     bActive = true;
-    age = 0;
     resolution = 64;
     genCircle();
     center = ofVec3f(x,y);
+
+    age = 0;
     tween = 0.0f;
     tweenStep = 0.01;
+
     inactiveTimer = 0;
     inactiveTimerStep = 0.05f;
-    changeThresh = 20;
+    changeThresh = 15;
 }
 
 ofFace::~ofFace() 

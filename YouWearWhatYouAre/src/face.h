@@ -7,7 +7,7 @@ class ofFace {
 
 public:
     
-    ofFace(ofImage & _face, ofVec3f _faceLocation);
+    ofFace(ofImage & _face, ofVec3f _faceLocation, ofVec3f _circleLoc);
     ~ofFace();
     
     void update();
@@ -18,6 +18,7 @@ public:
     
     int x;
     int y;
+    ofVec3f loc;
     float tween; // Multiplied by radius to control anim
     float tweenStep; // Stepping the tween value
     

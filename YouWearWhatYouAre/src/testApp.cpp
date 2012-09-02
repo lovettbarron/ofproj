@@ -156,7 +156,7 @@ void testApp::saveFace() {
         newFace.cropFrom(pixels, x, y, w, h );
         newFace.reloadTexture();
         
-        ofFace theFace = ofFace(newFace, ofVec3f(x + (w/2), y + (h/2),0));
+        ofFace theFace = ofFace(newFace, ofVec3f(x + (w/2), y + (h/2),0),ofVec3f(canvas1->width+ofRandom(-5,5),canvas1->height+ofRandom(-5,5),0));
         faces.push_back( theFace );
         
         canvas1->compareWithStillActive( &faces );
